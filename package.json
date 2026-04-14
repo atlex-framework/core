@@ -1,0 +1,70 @@
+{
+  "name": "@atlex/core",
+  "version": "0.1.0-beta",
+  "description": "IoC container, routing, middleware, events, and HTTP foundation for Atlex",
+  "type": "module",
+  "license": "MIT",
+  "author": {
+    "name": "Karen Hamazaspyan",
+    "url": "https://github.com/khamazaspyan"
+  },
+  "keywords": [
+    "atlex",
+    "framework",
+    "typescript",
+    "nodejs",
+    "routing",
+    "di"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/atlex-framework/atlex-monorepo.git",
+    "directory": "packages/core"
+  },
+  "homepage": "https://atlex.dev",
+  "bugs": {
+    "url": "https://github.com/atlex-framework/atlex-monorepo/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test": "vitest run -c vitest.config.ts",
+    "prepublishOnly": "pnpm run typecheck && pnpm run build"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./events/testing": {
+      "types": "./dist/events/testing/EventFake.d.ts",
+      "default": "./dist/events/testing/EventFake.js"
+    }
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "helmet": "^8.1.0",
+    "reflect-metadata": "^0.2.2",
+    "socket.io": "^4.8.3"
+  },
+  "devDependencies": {
+    "@swc/core": "^1.15.24",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.3",
+    "unplugin-swc": "^1.5.9",
+    "vitest": "^3.2.4"
+  }
+}
