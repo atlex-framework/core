@@ -1,6 +1,6 @@
 {
   "name": "@atlex/core",
-  "version": "0.1.0-beta",
+  "version": "0.1.1",
   "description": "IoC container, routing, middleware, events, and HTTP foundation for Atlex",
   "type": "module",
   "license": "MIT",
