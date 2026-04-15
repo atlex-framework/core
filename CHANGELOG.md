@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.4
+
+### Patch Changes
+
+- 31fa47d: Update documentations and remove depricated packages
+
 ## 0.1.3
 
 ### Patch Changes
