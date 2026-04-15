@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.3
+
+### Patch Changes
+
+- fac4c29: Update documentation
+
 ## 0.1.2
 
 ### Patch Changes
