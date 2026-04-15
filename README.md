@@ -1,6 +1,6 @@
 # @atlex/core
 
-> A robust, feature-rich framework core for building scalable TypeScript applications
+> A robust, feature-rich framework core for building scalable Node.js applications
 
 [![npm](https://img.shields.io/npm/v/@atlex/core?style=flat-square&color=7c3aed)](https://www.npmjs.com/package/@atlex/core)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-7c3aed?style=flat-square)](https://www.typescriptlang.org/)
@@ -752,4 +752,6 @@ For detailed documentation, examples, and API reference, visit the [Atlex docume
 
 ## License
 
-MIT
+## MIT
+
+Part of [Atlex](https://atlex.dev) — A modern framework for Node.js.
