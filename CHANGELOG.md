@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.6
+
+### Patch Changes
+
+- 0240bf4: Add Google and Apple OAuth2 provider
+
 ## 0.1.5
 
 ### Patch Changes
