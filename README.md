@@ -68,6 +68,7 @@ app.listen(3000, () => {
 - **Exception Handling** - Centralized error handling and custom exceptions
 - **Decorators** - Clean decorator syntax for controllers, routes, and dependency injection
 - **Request/Response Helpers** - Convenient request/response access throughout application
+- **WebSocket Server** - Room-based broadcasting with JWT auth on upgrade (v0.1.7)
 
 ## Dependency Injection
 
@@ -650,6 +651,127 @@ process.on('SIGTERM', async () => {
   process.exit(0)
 })
 ```
+
+## WebSocket Server
+
+`@atlex/core` v0.1.7 ships a room-based WebSocket module with JWT auth on the HTTP upgrade handshake. Invalid or missing tokens are rejected with `401` before the WebSocket handshake completes.
+
+### Setup
+
+Install the `ws` peer dependency if not already present:
+
+```bash
+npm install ws
+npm install --save-dev @types/ws
+```
+
+### Define a Gateway
+
+Extend `WsGateway` to handle connections and implement room logic:
+
+```typescript
+import { WsGateway, WsClient } from '@atlex/core'
+
+// Augment WsClientMeta with your JWT claim shape
+declare module '@atlex/core' {
+  interface WsClientMeta {
+    userId: string
+    familyId: string
+  }
+}
+
+export class AppWsGateway extends WsGateway {
+  handleConnection(client: WsClient): void {
+    // Subscribe the client to rooms on connect
+    client.join(`family:${client.meta.familyId}`)
+    client.join(`device:${client.meta.userId}`)
+  }
+
+  handleDisconnect(_client: WsClient): void {
+    // Client is removed from all rooms automatically after this hook
+  }
+}
+```
+
+### Register with the App
+
+Pass `WsServiceProvider` a `gateway` class and a `verifyToken` callback before `app.listen()`:
+
+```typescript
+import { WsServiceProvider } from '@atlex/core'
+import { AppWsGateway } from './AppWsGateway.js'
+
+app.register(
+  new WsServiceProvider({
+    gateway: AppWsGateway,
+    verifyToken: async (token) => {
+      // Return decoded JWT claims — throw to reject the upgrade
+      return app.make(JwtProvider).verify(token)
+    },
+  }),
+)
+
+app.boot().listen(3000)
+```
+
+The token is read from the `Authorization: Bearer <token>` header or the `?token=` query parameter.
+
+### Broadcast from Anywhere
+
+Resolve the gateway from the container and call `broadcast`:
+
+```typescript
+const gw = app.make(AppWsGateway)
+
+// Broadcast to everyone in a room
+gw.broadcast('family:abc123', 'location:update', { lat: 40.7, lng: -74.0 })
+
+// Send to a specific client
+client.send('status:update', { online: true })
+```
+
+### Room Management
+
+`WsRoom` tracks which clients are in which rooms. `client.join` / `client.leave` are scoped to the current client — use them inside `handleConnection`:
+
+```typescript
+handleConnection(client: WsClient): void {
+  client.join('global')
+  client.join(`family:${client.meta.familyId}`)
+}
+
+// Check room size (via the injected WsRoom)
+const room = app.make<WsRoom>('ws.room')
+console.log(room.size('family:abc123')) // number of connected clients
+```
+
+### WebSocket API Reference
+
+#### WsGateway
+
+| Method / Property                 | Description                              |
+| --------------------------------- | ---------------------------------------- |
+| `handleConnection(client)`        | Abstract — called on successful JWT auth |
+| `handleDisconnect(client)`        | Abstract — called on socket close        |
+| `broadcast(room, event, payload)` | Send JSON event to all clients in a room |
+
+#### WsClient
+
+| Method / Property      | Description                               |
+| ---------------------- | ----------------------------------------- |
+| `socket`               | Raw `ws.WebSocket` instance               |
+| `meta`                 | Decoded JWT claims (`WsClientMeta`)       |
+| `rooms`                | `Set<string>` of current room memberships |
+| `join(room)`           | Subscribe to a room (idempotent)          |
+| `leave(room)`          | Unsubscribe from a room                   |
+| `send(event, payload)` | Send a typed event to this client only    |
+
+#### WsServiceProvider options
+
+| Option        | Type                                       | Description                       |
+| ------------- | ------------------------------------------ | --------------------------------- |
+| `gateway`     | `typeof WsGateway`                         | Your gateway subclass to register |
+| `verifyToken` | `(token: string) => Promise<WsClientMeta>` | Token validator; throw to reject  |
 
 ## API Overview
 

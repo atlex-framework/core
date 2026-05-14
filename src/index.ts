@@ -59,3 +59,8 @@ export { handleExceptions } from './middleware/handleExceptions.js'
 export { securityHeaders } from './middleware/securityHeaders.js'
 
 export * from './exceptions/index.js'
+
+export { WsGateway } from './websocket/WsGateway.js'
+export { WsClient, type WsClientMeta } from './websocket/WsClient.js'
+export { WsRoom } from './websocket/WsRoom.js'
+export { WsServiceProvider, type WsServiceProviderOptions } from './websocket/WsServiceProvider.js'
