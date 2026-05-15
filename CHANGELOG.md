@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.9
+
+### Patch Changes
+
+- da7ec68: Add enum, uuid columns
+
 ## 0.1.8
 
 ### Patch Changes
