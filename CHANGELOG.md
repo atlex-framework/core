@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.10
+
+### Patch Changes
+
+- 7279e8a: Add patch
+
 ## 0.1.9
 
 ### Patch Changes
